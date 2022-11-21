@@ -32,9 +32,36 @@ async function createTicket(ticketTypeId: number, enrollmentId: number) {
   });
 }
 
+async function findTicketById(ticketId: number) {
+  return prisma.ticket.findUnique({
+    where: {
+      id: ticketId,
+    },
+  });
+}
+
+async function checkTicketByUser(ticketId: number, userId: number) {
+  return prisma.ticket.findFirst({
+    where: {
+      AND: [
+        {
+          id: ticketId,
+        },
+        {
+          Enrollment: {
+            userId: userId,
+          },
+        },
+      ],
+    },
+  });
+}
+
 const ticketsRepository = {
   findTicketTypes,
   findTicketsByUserId,
   createTicket,
+  findTicketById,
+  checkTicketByUser,
 };
 export default ticketsRepository;

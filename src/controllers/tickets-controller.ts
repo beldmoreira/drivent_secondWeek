@@ -26,7 +26,9 @@ export async function findTicketsByUserId(req: AuthenticatedRequest, res: Respon
 export async function createTicket(req: AuthenticatedRequest, res: Response) {
   const { userId } = req;
   const { ticketTypeId } = req.body;
-  if (!ticketTypeId) res.sendStatus(httpStatus.BAD_REQUEST);
+  if (!ticketTypeId) {
+    res.sendStatus(httpStatus.BAD_REQUEST);
+  }
   try {
     const enrollmentId = await enrollmentsService.getOneWithAddressByUserId(userId);
     const newTicket = await ticketsService.createTicket(ticketTypeId, enrollmentId.id);
