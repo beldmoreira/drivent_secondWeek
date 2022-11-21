@@ -21,3 +21,20 @@ export async function getPayments(req: AuthenticatedRequest, res: Response) {
     if (error.name === "UnauthorizedError") return res.sendStatus(httpStatus.UNAUTHORIZED);
   }
 }
+
+export async function createPayments(req: AuthenticatedRequest, res: Response) {
+  const { userId } = req;
+  const { ticketId, cardData } = req.body;
+  if (!ticketId) {
+    return res.sendStatus(httpStatus.BAD_REQUEST);
+  }
+  try {
+    const getEnrollment = await enrollmentsService.findEnrollment(userId);
+    const payment = await paymentsService.createPayment(userId, ticketId, cardData, getEnrollment.id);
+    return res.status(httpStatus.OK).send(payment);
+  } catch (error) {
+    if (error.name === "RequestError") return res.sendStatus(httpStatus.BAD_REQUEST);
+    if (error.name === "NotFoundError") return res.sendStatus(httpStatus.NOT_FOUND);
+    if (error.name === "UnauthorizedError") return res.sendStatus(httpStatus.UNAUTHORIZED);
+  }
+}
